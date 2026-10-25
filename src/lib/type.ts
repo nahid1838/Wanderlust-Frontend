@@ -8,6 +8,8 @@ export type IDestination = {
   departureDate: string
   imageUrl: string
   description: string
-  /** Optional — the current API doesn't send it; UI falls back to 4.5. */
+  /** Optional — the current API doesn't send these; UI uses design fallbacks. */
   rating?: number
+  reviews?: number
+  highlights?: string[]
 }

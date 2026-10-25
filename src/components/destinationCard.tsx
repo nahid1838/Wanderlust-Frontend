@@ -50,7 +50,7 @@ const DestinationCard = ({ destination }: { destination: IDestination }) => {
                 </p>
 
                 <Link
-                    href={BOOK_NOW_HREF}
+                    href={`/all-destinations/${destination._id}`}
                     className="mt-4 inline-flex items-center gap-1 text-xs font-semibold tracking-wide text-brand uppercase hover:underline"
                 >
                     Book Now
