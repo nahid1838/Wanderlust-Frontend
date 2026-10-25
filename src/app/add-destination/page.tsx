@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Add New Travel Package | Wanderlast",
 }
 
-export default function AddNewTravelPage() {
+export default function AddDestinationPage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-12 md:py-16">
       <h1 className="text-4xl font-medium text-foreground sm:text-5xl">

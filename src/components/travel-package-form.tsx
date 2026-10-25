@@ -12,16 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-
-const CATEGORIES: { value: string; label: string }[] = [
-  { value: "beach", label: "Beach" },
-  { value: "mountain", label: "Mountain" },
-  { value: "adventure", label: "Adventure" },
-  { value: "cultural", label: "Cultural" },
-  { value: "city", label: "City" },
-  { value: "wildlife", label: "Wildlife" },
-  { value: "luxury", label: "Luxury" },
-]
+import { useRouter } from "next/navigation"
+import { CATEGORIES } from "@/lib/constant"
 
 /** Shared field look: filled light-gray inputs matching the mockup. */
 const fieldClassName =
@@ -30,10 +22,33 @@ const fieldClassName =
 const labelClassName = "block text-sm font-medium text-foreground"
 
 export function TravelPackageForm() {
+
+  const router = useRouter();
+
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+    router.refresh();
+
+
+    const res = await fetch("http://localhost:5000/add-destination", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+    console.log(result)
+
+  }
+
   return (
-    <form
+    <form onSubmit={handleSubmit}
       // TODO: wire to your API — currently presentational (no submit/reload).
-      onSubmit={(event) => event.preventDefault()}
       className="rounded-xl border border-border/70 bg-background p-6 shadow-sm sm:p-10"
     >
       <div className="space-y-5">

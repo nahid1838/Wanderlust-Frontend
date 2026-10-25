@@ -21,9 +21,9 @@ import {
  */
 const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
-  { label: "Destinations", href: "#" },
+  { label: "Destinations", href: "/all-destinations" },
+  { label: "Add Destination", href: "/add-destination"},
   { label: "My Bookings", href: "#" },
-  { label: "Admin", href: "#" },
 ]
 
 const AUTH_LINKS: {
