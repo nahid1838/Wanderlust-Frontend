@@ -8,13 +8,14 @@ import {
   CalendarDaysIcon,
   CheckIcon,
   MapPinIcon,
-  PencilIcon,
   StarIcon,
   Trash2Icon,
 } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { IDestination } from "@/lib/type"
+import EditDestinationDialog from "@/components/EditDestinationDialog"
+import DeleteDestinationDialog from "@/components/DeleteDestinationDialog"
 
 /** Shown while the API doesn't provide `highlights` (mockup copy). */
 const HIGHLIGHTS_FALLBACK: string[] = [
@@ -55,26 +56,12 @@ const DestinationDetailsPage = async ({
           <ArrowLeftIcon className="size-4" />
           Back to Destinations
         </Link>
+
+
         <div className="flex items-center gap-3">
           {/* TODO: route to the edit page once it exists */}
-          <Button
-            type="button"
-            variant="outline"
-            className="h-10 px-4 text-foreground"
-          >
-            <PencilIcon />
-            Edit
-          </Button>
-          <Link
-            href="/all-destinations"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "h-10 border-destructive px-4 text-destructive hover:bg-destructive/10 hover:text-destructive"
-            )}
-          >
-            <Trash2Icon />
-            Cancel
-          </Link>
+          <EditDestinationDialog destination={data}/>
+          <DeleteDestinationDialog id={id} />
         </div>
       </div>
 

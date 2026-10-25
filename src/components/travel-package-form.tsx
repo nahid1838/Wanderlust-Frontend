@@ -14,6 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from "next/navigation"
 import { CATEGORIES } from "@/lib/constant"
+import Link from "next/link"
 
 /** Shared field look: filled light-gray inputs matching the mockup. */
 const fieldClassName =
@@ -42,8 +43,6 @@ export function TravelPackageForm() {
     });
 
     const result = await res.json();
-    console.log(result)
-
   }
 
   return (
@@ -175,6 +174,8 @@ export function TravelPackageForm() {
           <Trash2Icon />
           Cancel
         </Button>
+
+
         <Button
           type="submit"
           className="h-11 bg-brand px-5 text-white hover:bg-brand/90"
