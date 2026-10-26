@@ -32,7 +32,7 @@ const AUTH_LINKS: {
   icon?: typeof UserIcon
 }[] = [
   { label: "Profile", href: "#", icon: UserIcon },
-  { label: "Login", href: "#" },
+  { label: "Login", href: "/login" },
   { label: "Sign Up", href: "/signUp" },
 ]
 

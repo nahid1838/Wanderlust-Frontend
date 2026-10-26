@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation"; // CHANGED: was `redirect`
+import { toast } from "sonner";
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 48 48" className="h-4 w-4" aria-hidden="true">
@@ -20,6 +21,7 @@ const GoogleIcon = () => (
 );
 
 const SignUpPage = () => {
+  const router = useRouter(); // ADDED
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -40,30 +42,27 @@ const SignUpPage = () => {
 
     const {data, error} = await authClient.signUp.email({
         ...user,
-        callbackURL: "/"
     })
 
     if(data) {
-        console.log(data);
-        redirect("/");
+        toast.success("Account created successfully 🎉", {
+        description: `Welcome to Wanderlust, ${form.name}!`,
+        duration: 4000,
+        });
+        router.push("/"); 
     }
 
-    if(error) {
-        console.log(error);
+    if (error) {
+        toast.error("Sign up failed", {
+        description: error.message ?? "Something went wrong. Try again.",
+    });
+        return;
     }
 
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
-    // TODO: call your auth client here, e.g. Better Auth:
-    // await authClient.signUp.email({
-    //   name: form.name,
-    //   email: form.email,
-    //   password: form.password,
-    // });
-    console.log(form);
   };
 
   const handleGoogle = async () => {
@@ -204,10 +203,10 @@ const SignUpPage = () => {
             <p className="mt-5 text-center text-xs text-slate-500 sm:text-sm">
               Already have an account?{" "}
               <Link
-                href="/signin"
+                href="/login"
                 className="font-semibold text-[#14a0c0] hover:underline"
               >
-                Sign In
+                Login
               </Link>
             </p>
           </CardContent>
