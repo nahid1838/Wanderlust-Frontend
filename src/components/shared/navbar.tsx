@@ -33,7 +33,7 @@ const AUTH_LINKS: {
 }[] = [
   { label: "Profile", href: "#", icon: UserIcon },
   { label: "Login", href: "#" },
-  { label: "Sign Up", href: "#" },
+  { label: "Sign Up", href: "/signUp" },
 ]
 
 const linkClassName = (isActive: boolean) =>

@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import DestinationCard from "@/components/destinationCard"
+import DestinationCard from "@/components/shared/destinationCard"
 import { CATEGORIES } from "@/lib/constant"
 import type { IDestination } from "@/lib/type"
 

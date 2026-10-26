@@ -14,8 +14,8 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { IDestination } from "@/lib/type"
-import EditDestinationDialog from "@/components/EditDestinationDialog"
-import DeleteDestinationDialog from "@/components/DeleteDestinationDialog"
+import EditDestinationDialog from "@/components/destination/EditDestinationDialog"
+import DeleteDestinationDialog from "@/components/destination/DeleteDestinationDialog"
 
 /** Shown while the API doesn't provide `highlights` (mockup copy). */
 const HIGHLIGHTS_FALLBACK: string[] = [

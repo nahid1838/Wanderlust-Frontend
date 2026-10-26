@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import type { Metadata } from "next"
-import DestinationsExplorer from "@/components/destinations-explorer"
+import DestinationsExplorer from "@/components/destination/destinations-explorer"
 import { Skeleton } from "@/components/ui/skeleton"
 import { IDestination } from "@/lib/type"
 
