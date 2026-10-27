@@ -20,7 +20,7 @@ const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
   { label: "Destinations", href: "/all-destinations" },
   { label: "Add Destination", href: "/add-destination" },
-  { label: "My Bookings", href: "#" },
+  { label: "My Bookings", href: "/my-bookings" },
 ]
 
 const linkClassName = (isActive: boolean) =>

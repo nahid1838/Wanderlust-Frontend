@@ -13,3 +13,6 @@ export type IDestination = {
   reviews?: number
   highlights?: string[]
 }
+
+
+
