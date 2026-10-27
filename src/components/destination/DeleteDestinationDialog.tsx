@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 
 const DeleteDestinationDialog = ({ id }: { id: string }) => {
@@ -34,6 +35,7 @@ const DeleteDestinationDialog = ({ id }: { id: string }) => {
             });
             if (!res.ok) throw new Error(`Delete failed with status ${res.status}`);
 
+            toast.success("Destination deleted successfully!");
             router.refresh(); // re-render server data after deletion
             setOpen(false);
             router.push("/all-destinations");   // close only after success

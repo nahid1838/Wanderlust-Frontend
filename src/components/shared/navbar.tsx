@@ -4,8 +4,9 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { cn } from "cn"
-import { MenuIcon, UserIcon } from "lucide-react"
+import { MenuIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { authClient } from "@/lib/auth-client"
 import {
   Sheet,
   SheetContent,
@@ -13,27 +14,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { UserMenu } from "./userMenu"
 
-/**
- * Route wiring lives here: replace "#" with the real path once the page
- * exists (e.g. "/destinations"). Links with href "#" stay inert and are
- * never highlighted as active; the current pathname highlights automatically.
- */
 const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
   { label: "Destinations", href: "/all-destinations" },
-  { label: "Add Destination", href: "/add-destination"},
+  { label: "Add Destination", href: "/add-destination" },
   { label: "My Bookings", href: "#" },
-]
-
-const AUTH_LINKS: {
-  label: string
-  href: string
-  icon?: typeof UserIcon
-}[] = [
-  { label: "Profile", href: "#", icon: UserIcon },
-  { label: "Login", href: "/login" },
-  { label: "Sign Up", href: "/signUp" },
 ]
 
 const linkClassName = (isActive: boolean) =>
@@ -51,6 +38,9 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
+  // session = logged in user-er data, na thakle null
+  const { data: session, isPending } = authClient.useSession()
+
   const isActive = (href: string) => href !== "#" && pathname === href
 
   return (
@@ -62,7 +52,10 @@ export function Navbar() {
             <Link
               key={link.label}
               href={link.href}
-              className={cn(linkClassName(isActive(link.href)), "hidden md:inline-flex")}
+              className={cn(
+                linkClassName(isActive(link.href)),
+                "hidden md:inline-flex"
+              )}
             >
               {link.label}
             </Link>
@@ -70,27 +63,28 @@ export function Navbar() {
         </nav>
 
         {/* Center: logo */}
-        <Link
-          href="/"
-          className="text-2xl font-bold tracking-tight text-brand"
-        >
+        <Link href="/" className="text-2xl font-bold tracking-tight text-brand">
           Wanderlast
         </Link>
 
-        {/* Right: auth links (desktop) + menu button (mobile) */}
-        <div className="flex flex-1 items-center justify-end gap-5">
-          <div className="hidden items-center gap-5 md:flex">
-            {AUTH_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className={authLinkClassName}
-              >
-                {link.icon && <link.icon className="size-3.5" />}
-                {link.label}
+        {/* Right side */}
+        <div className="flex flex-1 items-center justify-end gap-3 sm:gap-5">
+          {/* User thakle: Avatar (mobile + desktop dui jaygatei dekhabe) */}
+          {!isPending && session && <UserMenu user={session.user} />}
+
+          {/* User na thakle: Login + Sign Up (shudhu desktop-e) */}
+          {!isPending && !session && (
+            <div className="hidden items-center gap-5 md:flex">
+              <Link href="/login" className={authLinkClassName}>
+                Login
               </Link>
-            ))}
-          </div>
+              <Link href="/signUp" className={authLinkClassName}>
+                Sign Up
+              </Link>
+            </div>
+          )}
+
+          {/* Mobile menu button */}
           <Button
             variant="ghost"
             size="icon"
@@ -103,7 +97,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* ---------- MOBILE MENU ---------- */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="gap-0">
           <SheetHeader>
@@ -114,6 +108,7 @@ export function Navbar() {
               Site navigation
             </SheetDescription>
           </SheetHeader>
+
           <nav className="flex flex-col gap-4 px-4 pb-4">
             {NAV_LINKS.map((link) => (
               <Link
@@ -125,19 +120,27 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <div className="border-t border-border pt-4">
-              {AUTH_LINKS.map((link) => (
+
+            {/* Mobile-e Login/Sign Up shudhu user na thakle dekhabe.
+                User thakle avatar upore-i ache, tai ekhane kichu lagbe na */}
+            {!isPending && !session && (
+              <div className="border-t border-border pt-4">
                 <Link
-                  key={link.label}
-                  href={link.href}
+                  href="/login"
                   onClick={() => setOpen(false)}
                   className={cn(authLinkClassName, "py-2")}
                 >
-                  {link.icon && <link.icon className="size-3.5" />}
-                  {link.label}
+                  Login
                 </Link>
-              ))}
-            </div>
+                <Link
+                  href="/signUp"
+                  onClick={() => setOpen(false)}
+                  className={cn(authLinkClassName, "py-2")}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </nav>
         </SheetContent>
       </Sheet>

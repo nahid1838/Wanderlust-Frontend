@@ -1,7 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { cn } from "cn"
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -9,9 +8,8 @@ import {
   CheckIcon,
   MapPinIcon,
   StarIcon,
-  Trash2Icon,
 } from "lucide-react"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { IDestination } from "@/lib/type"
 import EditDestinationDialog from "@/components/destination/EditDestinationDialog"

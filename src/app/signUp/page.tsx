@@ -66,7 +66,9 @@ const SignUpPage = () => {
   };
 
   const handleGoogle = async () => {
-    // TODO: await authClient.signIn.social({ provider: "google" });
+    await authClient.signIn.social({
+      provider: "google"
+    })
   };
 
   return (

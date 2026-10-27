@@ -58,7 +58,7 @@ export function Banner() {
             <ArrowRightIcon />
           </Link>
           <Link
-            href={DESTINATIONS_HREF}
+            href={"/all-destinations"}
             className={cn(
               buttonVariants(),
               "h-11 rounded-md bg-white/20 px-6 text-xs font-semibold tracking-widest text-white uppercase backdrop-blur-sm hover:bg-white/30 sm:text-sm"

@@ -14,7 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from "next/navigation"
 import { CATEGORIES } from "@/lib/constant"
-import Link from "next/link"
+import { toast } from "sonner"
 
 /** Shared field look: filled light-gray inputs matching the mockup. */
 const fieldClassName =
@@ -31,8 +31,18 @@ export function TravelPackageForm() {
 
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    router.refresh();
 
+    const isEmpty = Object.values(data).some(
+    (value) => typeof value === "string" && value.trim() === ""
+  );
+
+  if (isEmpty) {
+    toast.error("Please fill in all the fields!");
+    return;
+  }
+
+    router.refresh();
+    router.push("/all-destinations")
 
     const res = await fetch("http://localhost:5000/add-destination", {
       method: "POST",
@@ -43,6 +53,7 @@ export function TravelPackageForm() {
     });
 
     const result = await res.json();
+    toast.success("Travel package added successfully!");
   }
 
   return (

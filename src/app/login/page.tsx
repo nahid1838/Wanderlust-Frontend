@@ -60,7 +60,9 @@ const LoginPage = () => {
   };
 
   const handleGoogle = async () => {
-    // TODO: await authClient.signIn.social({ provider: "google" });
+    await authClient.signIn.social({
+      provider: "google"
+    })
   };
 
   return (
@@ -179,7 +181,7 @@ const LoginPage = () => {
             <p className="mt-5 text-center text-xs text-slate-500 sm:text-sm">
               Don&apos;t have an account?{" "}
               <Link
-                href="/signup"
+                href="/signUp"
                 className="font-semibold text-[#14a0c0] hover:underline"
               >
                 Sign Up

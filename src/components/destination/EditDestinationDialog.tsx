@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/constant";
 import { IDestination } from "@/lib/type";
+import { toast } from "sonner";
 
 const fieldClassName =
   "h-11 rounded-md border-border/60 bg-muted px-4 text-sm placeholder:text-muted-foreground/70 focus-visible:border-brand focus-visible:ring-brand/30";
@@ -59,7 +60,8 @@ const EditDestinationDialog = ({destination}: {destination: IDestination}) => {
       });
       if (!res.ok) throw new Error(`Update failed with status ${res.status}`);
 
-      router.refresh(); // re-render server data AFTER the update
+      router.refresh();
+      toast.success("Destination edited successfully!"); // re-render server data AFTER the update
       setOpen(false);   // close only after success — stays open on failure
     } catch (error) {
       console.error("Failed to update destination:", error);
