@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { Suspense } from "react"
 import {
   ArrowLeftIcon,
   CalendarDaysIcon,
@@ -10,6 +11,7 @@ import {
 } from "lucide-react"
 
 import { IDestination } from "@/lib/type"
+import { Skeleton } from "@/components/ui/skeleton"
 import EditDestinationDialog from "@/components/destination/EditDestinationDialog"
 import DeleteDestinationDialog from "@/components/destination/DeleteDestinationDialog"
 import BookingCard from "@/components/booking/BookingCard"
@@ -24,22 +26,48 @@ const HIGHLIGHTS_FALLBACK: string[] = [
 ]
 
 
-
-const DestinationDetailsPage = async ({
+const DestinationDetailsPage = ({
   params,
 }: PageProps<"/all-destinations/[id]">) => {
+  return (
+    <main className="mx-auto w-full max-w-5xl px-4 py-10">
+      {/* params + fetch are request-time reads — must sit behind
+          <Suspense> (Cache Components: uncached reads outside a
+          boundary fail the build). */}
+      <Suspense fallback={<DestinationDetailsSkeleton />}>
+        <DestinationDetails params={params} />
+      </Suspense>
+    </main>
+  );
+};
+
+async function DestinationDetails({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
 
   const res = await fetch(`http://localhost:5000/destination/${id}`);
   if (!res.ok) notFound();
-  const data: IDestination = await res.json();
+
+  // The API 404s missing destinations, but guard against an empty or
+  // malformed 200 body too — JSON.parse("") would crash the whole route.
+  let data: IDestination | null = null;
+  try {
+    const body = await res.text();
+    data = body ? (JSON.parse(body) as IDestination) : null;
+  } catch {
+    data = null;
+  }
+  if (!data) notFound();
 
   const rating = data.rating ?? 4.9;
   const reviews = data.reviews ?? 234;
   const highlights = data.highlights ?? HIGHLIGHTS_FALLBACK;
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10">
+    <div>
       {/* Top bar: back link + actions */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <Link
@@ -123,8 +151,29 @@ const DestinationDetailsPage = async ({
         {/* Booking card */}
         <BookingCard data={data} />
       </div>
-    </main>
+    </div>
   );
-};
+}
+
+/** Layout-matching placeholder while the destination streams in. */
+function DestinationDetailsSkeleton() {
+  return (
+    <div>
+      <Skeleton className="h-5 w-40" />
+      <Skeleton className="mt-6 aspect-[16/9] w-full rounded-lg" />
+      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="space-y-3">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-10 w-3/4" />
+          <Skeleton className="h-4 w-52" />
+          <Skeleton className="mt-6 h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-2/3" />
+        </div>
+        <Skeleton className="h-80 w-full rounded-xl" />
+      </div>
+    </div>
+  );
+}
 
 export default DestinationDetailsPage;

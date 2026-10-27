@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input"
  */
 const QUICK_LINKS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
-  { label: "Destinations", href: "#" },
-  { label: "My Bookings", href: "#" },
+  { label: "Destinations", href: "/all-destinations" },
+  { label: "My Bookings", href: "/my-bookings" },
   { label: "My Profile", href: "#" },
 ]
 

@@ -1,10 +1,13 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { authClient } from "@/lib/auth-client";
-import { IDestination } from "@/lib/type";
-import {ArrowRightIcon, CheckIcon} from "lucide-react"
+import { authClient } from "@/lib/auth-client"
+import { IDestination } from "@/lib/type"
+import { ArrowRightIcon, CheckIcon } from "lucide-react"
+import { toast } from "sonner"
 
 
 const BOOKING_INCLUDES: string[] = [
@@ -13,33 +16,77 @@ const BOOKING_INCLUDES: string[] = [
   "24/7 customer support",
 ]
 
-const BookingCard = ({data}: {data: IDestination}) => {
+const BookingCard = ({ data }: { data: IDestination }) => {
+    const router = useRouter()
+    const { data: session, isPending } = authClient.useSession()
+    const user = session?.user
+    const [isBooking, setIsBooking] = useState(false)
 
-    const {data: session} = authClient.useSession();
-    const user = session?.user;
-
-    const handleOnSubmit = async (e) => {
+    const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (isBooking || isPending) return;
 
-        const departureDate = e.currentTarget.departureDate.value;
-
-        const bookingData = {
-            userName: user?.name,
-            userEmail: user?.email,
-            userImage: user?.image,
-            ...data,
-            departureDate: departureDate,
-            bookingDate: new Date()
+        // Never create a booking without an account attached — bookings
+        // saved without userEmail are invisible on /my-bookings.
+        if (!user) {
+            toast.error("Please sign in to book this trip");
+            router.push("/login");
+            return;
         }
-        
-        const res = await fetch("http://localhost:5000/booking", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(bookingData)
-        });
-        const bookingRes = res.json();
+
+        const formData = new FormData(e.currentTarget);
+        const departureDate = String(formData.get("departureDate") ?? "");
+        if (!departureDate) {
+            toast.error("Please choose a departure date");
+            return;
+        }
+
+        // Explicit payload — never send the destination's `_id` (it used to
+        // be spread in, which caused a duplicate-key 500 when re-booking).
+        const bookingData = {
+            userName: user.name,
+            userEmail: user.email,
+            userImage: user.image ?? "",
+            destinationName: data.destinationName,
+            country: data.country,
+            category: data.category,
+            price: data.price,
+            duration: data.duration,
+            departureDate,
+            imageUrl: data.imageUrl,
+            description: data.description,
+            bookingDate: new Date().toISOString(),
+        };
+
+        setIsBooking(true);
+        try {
+            const res = await fetch("http://localhost:5000/booking", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(bookingData)
+            });
+
+            if (!res.ok) {
+                const body = (await res.json().catch(() => null)) as
+                    | { message?: string }
+                    | null;
+                throw new Error(body?.message ?? `Booking failed (${res.status})`);
+            }
+
+            toast.success("Booking confirmed!", {
+                description: `${data.destinationName} — view it under My Bookings.`,
+            });
+            router.push("/my-bookings");
+        } catch (error) {
+            console.error("Booking error:", error);
+            toast.error(
+                error instanceof Error ? error.message : "Booking failed. Please try again."
+            );
+        } finally {
+            setIsBooking(false);
+        }
     }
 
     return (
@@ -56,15 +103,17 @@ const BookingCard = ({data}: {data: IDestination}) => {
             type="date"
             name="departureDate"
             defaultValue={data.departureDate}
+            required
             aria-label="Departure date"
             className="mt-4 h-11 rounded-md border-border/60 bg-muted px-4 text-sm text-foreground focus-visible:border-brand focus-visible:ring-brand/30"
           />
 
           <Button
             type="submit"
+            disabled={isBooking || isPending}
             className="mt-4 h-11 w-full bg-brand text-white hover:bg-brand/90"
           >
-            Book Now
+            {isBooking ? "Booking..." : "Book Now"}
             <ArrowRightIcon />
           </Button>
           </form>

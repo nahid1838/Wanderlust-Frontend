@@ -14,5 +14,21 @@ export type IDestination = {
   highlights?: string[]
 }
 
+export type IBooking = {
+  _id: string
+  userName: string
+  userEmail: string
+  userImage?: string
+  destinationName: string
+  country: string
+  category?: string
+  price: number | string
+  duration: string
+  departureDate: string
+  imageUrl: string
+  description: string
+  bookingDate: string
+}
+
 
 

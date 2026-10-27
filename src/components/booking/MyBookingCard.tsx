@@ -1,34 +1,35 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { CalendarDays, MapPin, Eye, Trash2, CircleCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { redirect, useRouter } from "next/navigation";
-
-interface Booking {
-    _id: string;
-    userName: string;
-    userEmail: string;
-    destinationName: string;
-    country: string;
-    category?: string;
-    price: number | string;
-    duration: string;
-    departureDate: string;
-    imageUrl: string;
-    description: string;
-    bookingDate: string;
-}
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { IBooking } from "@/lib/type";
 
 interface MyBookingCardProps {
-    booking: Booking;
+    booking: IBooking;
 }
 
 const MyBookingCard = ({ booking }: MyBookingCardProps) => {
 
     const router = useRouter();
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
 
     const {
         _id,
@@ -40,22 +41,34 @@ const MyBookingCard = ({ booking }: MyBookingCardProps) => {
     } = booking;
 
     const handleCancelBooking = async () => {
+        if (isCancelling) return; // guard against double click
+        setIsCancelling(true);
         try {
             const res = await fetch(
-                `http://localhost:5000/my-bookings/${booking._id}`,
+                `http://localhost:5000/my-bookings/${_id}`,
                 {
                     method: "DELETE",
                 }
             );
 
             if (!res.ok) {
-                const errorMessage = await res.text();
-                throw new Error(errorMessage || "Failed to cancel booking");
+                const body = (await res.json().catch(() => null)) as
+                    | { message?: string }
+                    | null;
+                throw new Error(body?.message ?? `Cancel failed (${res.status})`);
             }
 
+            toast.success("Booking cancelled");
+            setConfirmOpen(false);
             router.refresh();
         } catch (error) {
             console.error("Cancel Booking Error:", error);
+            toast.error(
+                error instanceof Error ? error.message : "Failed to cancel booking"
+            );
+            // dialog stays open so the user can retry
+        } finally {
+            setIsCancelling(false);
         }
     };
 
@@ -85,6 +98,11 @@ const MyBookingCard = ({ booking }: MyBookingCardProps) => {
                     <h2 className="truncate text-base font-semibold leading-tight tracking-tight text-neutral-900">
                         {destinationName}
                     </h2>
+
+                    {/* Country */}
+                    <p className="mt-0.5 truncate text-[10px] text-neutral-500">
+                        {country}
+                    </p>
 
                     {/* Departure Date */}
                     <div className="mt-2 flex items-center gap-1.5 text-[10px] text-neutral-500">
@@ -118,19 +136,45 @@ const MyBookingCard = ({ booking }: MyBookingCardProps) => {
 
                 {/* Action Buttons */}
                 <div className="flex shrink-0 items-center justify-end gap-1.5 sm:self-end">
-                    <Button onClick={handleCancelBooking}
-                        variant="outline"
-                        className="h-7 rounded-none border-red-200 px-2.5 text-[10px] font-normal text-red-500 hover:bg-red-50 hover:text-red-600"
-                    >
-                        <Trash2 className="size-3" />
-                        Cancel
-                    </Button>
+                    {/* Confirm before destroying — one misclick used to delete permanently */}
+                    <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                        <AlertDialogTrigger
+                            render={
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="h-7 rounded-none border-red-200 px-2.5 text-[10px] font-normal text-red-500 hover:bg-red-50 hover:text-red-600"
+                                />
+                            }
+                        >
+                            <Trash2 className="size-3" />
+                            Cancel
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Cancel this booking?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This will permanently cancel your booking for{" "}
+                                    {destinationName}. This action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Keep Booking</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={handleCancelBooking}
+                                    disabled={isCancelling}
+                                    className="bg-destructive text-white hover:bg-destructive/90"
+                                >
+                                    {isCancelling ? "Cancelling..." : "Yes, Cancel Booking"}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
 
                     <Button
                         className="h-7 rounded-none bg-cyan-600 px-2.5 text-[10px] font-normal text-white hover:bg-cyan-700"
-                        onClick={() => {
-                            window.location.href = `/my-bookings/${_id}`;
-                        }}
+                        onClick={() => router.push(`/my-bookings/${_id}`)}
                     >
                         <Eye className="size-3" />
                         View

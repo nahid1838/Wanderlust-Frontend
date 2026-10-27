@@ -2,14 +2,14 @@ import Image from "next/image"
 import Link from "next/link"
 import { cn } from "cn"
 import { ArrowRightIcon } from "lucide-react"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 
 /**
- * Route wiring: replace "#" with the real path once the page exists.
- * The search strip is presentational for now.
+ * Route wiring: Explore/Search both lead to the destinations list
+ * (the search strip itself is presentational for now).
  */
-const EXPLORE_HREF = "#"
-const DESTINATIONS_HREF = "#"
+const EXPLORE_HREF = "/all-destinations"
+const DESTINATIONS_HREF = "/all-destinations"
 
 const SEARCH_FIELDS: { label: string; hint: string }[] = [
   { label: "Location", hint: "Address, City Or Zip" },
@@ -80,9 +80,15 @@ export function Banner() {
               <p className="mt-0.5 text-xs text-white/60">{field.hint}</p>
             </div>
           ))}
-          <Button className="h-12 rounded-none bg-brand px-10 text-sm font-semibold text-white hover:bg-brand/90 md:h-auto md:w-44">
+          <Link
+            href={DESTINATIONS_HREF}
+            className={cn(
+              buttonVariants(),
+              "h-12 rounded-none bg-brand px-10 text-sm font-semibold text-white hover:bg-brand/90 md:h-auto md:w-44"
+            )}
+          >
             Search
-          </Button>
+          </Link>
         </div>
       </div>
     </section>

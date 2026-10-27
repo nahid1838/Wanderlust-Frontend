@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { cn } from "cn"
 import { PackageIcon, Trash2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -25,9 +26,11 @@ const labelClassName = "block text-sm font-medium text-foreground"
 export function TravelPackageForm() {
 
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSubmitting) return;
 
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData.entries());
@@ -41,24 +44,29 @@ export function TravelPackageForm() {
     return;
   }
 
-    router.refresh();
-    router.push("/all-destinations")
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("http://localhost:5000/add-destination", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
 
-    const res = await fetch("http://localhost:5000/add-destination", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data)
-    });
-
-    const result = await res.json();
-    toast.success("Travel package added successfully!");
+      toast.success("Travel package added successfully!");
+      router.push("/all-destinations"); // navigate only AFTER the save succeeds
+    } catch (error) {
+      console.error("Failed to add destination:", error);
+      toast.error("Could not add the travel package. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <form onSubmit={handleSubmit}
-      // TODO: wire to your API — currently presentational (no submit/reload).
       className="rounded-xl border border-border/70 bg-background p-6 shadow-sm sm:p-10"
     >
       <div className="space-y-5">
@@ -91,7 +99,8 @@ export function TravelPackageForm() {
             <label htmlFor="category" className={labelClassName}>
               Category
             </label>
-            <Select defaultValue="beach">
+            {/* `name` so the selected category is included in FormData */}
+            <Select name="category" defaultValue="beach">
               <SelectTrigger
                 id="category"
                 className={cn(fieldClassName, "w-full")}
@@ -176,10 +185,10 @@ export function TravelPackageForm() {
       </div>
 
       <div className="mt-8 flex flex-wrap justify-end gap-4">
-        {/* TODO: wire Cancel (e.g. router.back() or form reset) */}
         <Button
           type="button"
           variant="outline"
+          onClick={() => router.back()}
           className="h-11 border-destructive bg-background px-5 text-destructive hover:bg-destructive/10 hover:text-destructive"
         >
           <Trash2Icon />
@@ -189,10 +198,11 @@ export function TravelPackageForm() {
 
         <Button
           type="submit"
+          disabled={isSubmitting}
           className="h-11 bg-brand px-5 text-white hover:bg-brand/90"
         >
           <PackageIcon />
-          Add Travel Package
+          {isSubmitting ? "Adding..." : "Add Travel Package"}
         </Button>
       </div>
     </form>

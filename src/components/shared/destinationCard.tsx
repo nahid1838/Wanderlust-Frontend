@@ -3,9 +3,6 @@ import Link from "next/link"
 import { ArrowUpRightIcon, CalendarDaysIcon, MapPinIcon, StarIcon } from "lucide-react"
 import { IDestination } from "@/lib/type"
 
-// TODO(routes): replace "#" with the booking page route.
-const BOOK_NOW_HREF = "#"
-
 const DestinationCard = ({ destination }: { destination: IDestination }) => {
     // API doesn't send a rating yet — show the design's 4.5 until it does.
     const rating = destination.rating ?? 4.5;

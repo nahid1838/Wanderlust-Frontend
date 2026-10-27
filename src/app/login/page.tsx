@@ -24,7 +24,6 @@ const GoogleIcon = () => (
 const LoginPage = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
 
   const router = useRouter();
 
@@ -137,18 +136,12 @@ const LoginPage = () => {
                   </Label>
                 </div>
                 <Link
-                  href="/forgot-password"
+                  href="#"
                   className="text-xs font-medium text-[#14a0c0] hover:underline"
                 >
                   Forgot password?
                 </Link>
               </div>
-
-              {error && (
-                <p className="text-sm text-red-500" role="alert">
-                  {error}
-                </p>
-              )}
 
               <Button
                 type="submit"
