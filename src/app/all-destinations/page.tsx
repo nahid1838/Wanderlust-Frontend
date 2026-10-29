@@ -83,7 +83,9 @@ const FALLBACK_DESTINATIONS: IDestination[] = [
 
 async function getDestinations(): Promise<IDestination[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destinations`)
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destinations`, {
+      cache: "no-store",
+    })
     if (!res.ok) throw new Error(`API responded with ${res.status}`)
     const data: unknown = await res.json()
     if (!Array.isArray(data)) throw new Error("API did not return an array")
