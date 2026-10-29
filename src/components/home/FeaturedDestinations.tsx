@@ -12,7 +12,9 @@ const ALL_DESTINATIONS_HREF = "/all-destinations"
 
 async function getFeaturedDestinations(): Promise<IFeaturedDestination[]> {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/featured-destinations`)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/featured-destinations`, {
+            cache: "no-store"
+        })
         if (!res.ok) throw new Error(`API responded with ${res.status}`)
 
         const data: unknown = await res.json()
