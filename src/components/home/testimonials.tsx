@@ -14,6 +14,8 @@ import {
  *   entries without one show an empty placeholder slot. To fill a
  *   slot later, add `photo: "/assets/..."` to the entry — the image
  *   renders automatically (portrait slot layout is already in place).
+ * - person3–6.jpg are random stock portraits — swap them for real
+ *   traveler photos anytime (same filename or update the path).
  */
 const TESTIMONIALS: {
   quote: string
@@ -40,24 +42,28 @@ const TESTIMONIALS: {
       '"An Unforgettable Journey Through Japan! From Bustling Tokyo To Serene Kyoto, Every Moment Was Flawlessly Orchestrated And Full Of Wonder."',
     name: "Emily Rodriguez",
     location: "London, UK",
+    photo: "/assets/person3.jpg",
   },
   {
     quote:
       '"The Kenyan Safari Was A Dream Come True! Witnessing The Great Migration Up Close Was Something We Will Treasure Forever."',
     name: "David Kimani",
     location: "Toronto, Canada",
+    photo: "/assets/person4.jpg",
   },
   {
     quote:
       '"Our Greek Islands Cruise Was Pure Magic! Crystal-Clear Waters, Charming Villages And A Crew That Went Above And Beyond."',
     name: "Andreas Mueller",
     location: "Berlin, Germany",
+    photo: "/assets/person5.jpg",
   },
   {
     quote:
       '"Paris Was Everything We Hoped For And More! The Skip-The-Line Tickets And Hand-Picked Hotels Made The Trip Effortless."',
     name: "Sophie Laurent",
     location: "Lyon, France",
+    photo: "/assets/person6.jpg",
   },
 ]
 

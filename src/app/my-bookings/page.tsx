@@ -5,11 +5,19 @@ import { auth } from "@/lib/auth";
 import MyBookingCard from "@/components/booking/MyBookingCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IBooking } from "@/lib/type";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 async function getBookings(email: string): Promise<IBooking[]> {
+
+  const token = await getTokenFromServer();
+
   try {
     const res = await fetch(
-      `http://localhost:5000/my-bookings/${encodeURIComponent(email)}`
+      `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${encodeURIComponent(email)}`, {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      }
     );
     if (!res.ok) throw new Error(`API responded with ${res.status}`);
     const data: unknown = await res.json();

@@ -45,7 +45,7 @@ const MyBookingCard = ({ booking }: MyBookingCardProps) => {
         setIsCancelling(true);
         try {
             const res = await fetch(
-                `http://localhost:5000/my-bookings/${_id}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${_id}`,
                 {
                     method: "DELETE",
                 }

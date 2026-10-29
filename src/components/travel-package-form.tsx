@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from "next/navigation"
 import { CATEGORIES } from "@/lib/constant"
 import { toast } from "sonner"
+import { getTokenFromClient } from "@/lib/getTokenFromClient"
 
 /** Shared field look: filled light-gray inputs matching the mockup. */
 const fieldClassName =
@@ -33,9 +34,9 @@ export function TravelPackageForm() {
     if (isSubmitting) return;
 
     const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    const destinationData = Object.fromEntries(formData.entries());
 
-    const isEmpty = Object.values(data).some(
+    const isEmpty = Object.values(destinationData).some(
     (value) => typeof value === "string" && value.trim() === ""
   );
 
@@ -45,13 +46,17 @@ export function TravelPackageForm() {
   }
 
     setIsSubmitting(true);
+
+    
     try {
-      const res = await fetch("http://localhost:5000/add-destination", {
+      const token = await getTokenFromClient();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-destination`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(destinationData)
       });
       if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
 

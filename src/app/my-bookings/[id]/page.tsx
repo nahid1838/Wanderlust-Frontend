@@ -15,6 +15,7 @@ import { auth } from "@/lib/auth";
 import { IBooking } from "@/lib/type";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 /** `2026-11-25` → date-only parse; full ISO timestamps parse as-is. */
 function parseDate(value: string): Date {
@@ -42,8 +43,14 @@ async function findBooking(id: string): Promise<IBooking | null> {
   if (!email) redirect("/login");
 
   try {
+    // The backend protects /my-bookings/* with verifyToken — attach the JWT.
+    const token = await getTokenFromServer();
     const res = await fetch(
-      `http://localhost:5000/my-bookings/${encodeURIComponent(email)}`
+      `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${encodeURIComponent(email)}`, {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      }
     );
     if (!res.ok) return null;
     const data: unknown = await res.json();

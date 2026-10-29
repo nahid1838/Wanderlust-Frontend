@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 
 const DeleteDestinationDialog = ({ id }: { id: string }) => {
@@ -29,9 +30,14 @@ const DeleteDestinationDialog = ({ id }: { id: string }) => {
     const handleDeleteDestination = async () => {
         if (isDeleting) return; // guard against double click
         setIsDeleting(true);
+
+        const token = await getTokenFromClient();
         try {
-            const res = await fetch(`http://localhost:5000/destination/${id}`, {
-                method: "DELETE"
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destination/${id}`, {
+                method: "DELETE",
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
             });
             if (!res.ok) throw new Error(`Delete failed with status ${res.status}`);
 

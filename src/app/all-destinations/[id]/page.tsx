@@ -48,7 +48,10 @@ async function DestinationDetails({
 }) {
   const { id } = await params;
 
-  const res = await fetch(`http://localhost:5000/destination/${id}`);
+  // Public route — the backend no longer requires a token for viewing.
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destination/${id}`);
+
+
   if (!res.ok) notFound();
 
   // The API 404s missing destinations, but guard against an empty or

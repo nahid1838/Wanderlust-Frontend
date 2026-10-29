@@ -1,4 +1,4 @@
-export type IDestination = {
+export interface IDestination {
   _id: string
   destinationName: string
   country: string
@@ -14,7 +14,7 @@ export type IDestination = {
   highlights?: string[]
 }
 
-export type IBooking = {
+export interface IBooking  {
   _id: string
   userName: string
   userEmail: string
@@ -30,5 +30,18 @@ export type IBooking = {
   bookingDate: string
 }
 
+export interface IFeaturedDestination {
+  _id: string
+  destinationName: string
+  country: string
+  category: string
+  price: number
+  duration: string
+  departureDate: string
+  imageUrl: string
+  description: string
+  /** Optional — the current API doesn't send this; UI uses the design fallback. */
+  rating?: number
+}
 
 

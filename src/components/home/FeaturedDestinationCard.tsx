@@ -1,0 +1,66 @@
+import Image from "next/image"
+import Link from "next/link"
+import { ArrowUpRightIcon, CalendarDaysIcon, MapPinIcon, StarIcon } from "lucide-react"
+import { IFeaturedDestination } from "@/lib/type";
+
+const FeaturedDestinationCard = ({featuredDestination}: {featuredDestination: IFeaturedDestination}) => {
+    // API doesn't send a rating yet — show the design's 4.5 until it does.
+    const rating = featuredDestination.rating ?? 4.5;
+
+    return (
+        <article className="group h-full overflow-hidden rounded-xl border border-border/70 bg-background shadow-sm transition-shadow hover:shadow-md">
+            <div className="relative aspect-[8/5]">
+                <Image
+                    src={featuredDestination.imageUrl}
+                    alt={featuredDestination.destinationName}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                />
+                {/* Rating badge */}
+                <span className="absolute top-3 right-3 flex items-center gap-1 rounded-md bg-background/95 px-2 py-1 text-xs font-medium text-foreground shadow-sm">
+                    {rating}
+                    <StarIcon className="size-3 fill-current" />
+                </span>
+            </div>
+
+            <div className="p-4">
+                {/* Country */}
+                <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <MapPinIcon className="size-3.5" />
+                    {featuredDestination.country}
+                </p>
+
+                {/* Name + price */}
+                <div className="mt-2 flex items-baseline justify-between gap-2">
+                    <h3 className="text-lg font-semibold text-foreground">
+                        {featuredDestination.destinationName}
+                    </h3>
+                    <p className="shrink-0">
+                        <span className="text-lg font-semibold text-foreground">
+                            ${featuredDestination.price}
+                        </span>
+                        <span className="text-xs text-muted-foreground">/Person</span>
+                    </p>
+                </div>
+
+                {/* Duration */}
+                <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <CalendarDaysIcon className="size-3.5" />
+                    {featuredDestination.duration}
+                </p>
+
+                {/* Book Now */}
+                <Link
+                    href={`/all-destinations/${featuredDestination._id}`}
+                    className="mt-4 inline-flex items-center gap-1 text-xs font-semibold tracking-wide text-brand uppercase hover:underline"
+                >
+                    Book Now
+                    <ArrowUpRightIcon className="size-3.5" />
+                </Link>
+            </div>
+        </article>
+    );
+};
+
+export default FeaturedDestinationCard;
