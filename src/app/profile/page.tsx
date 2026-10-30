@@ -32,6 +32,7 @@ async function getBookings(email: string): Promise<IBooking[]> {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${encodeURIComponent(email)}`,
       {
+        cache: "no-store",
         headers: {
           authorization: `Bearer ${token}`,
         },
