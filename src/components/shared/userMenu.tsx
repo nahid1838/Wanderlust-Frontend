@@ -84,7 +84,7 @@ export function UserMenu({ user }: UserMenuProps) {
 
         {/* CHANGED: asChild-er bodole render prop */}
         <DropdownMenuItem
-          render={<Link href="#" />}
+          render={<Link href="/profile" />}
           className="cursor-pointer"
         >
           <UserIcon className="size-4" />

@@ -72,6 +72,17 @@ const BookingCard = ({ data }: { data: IDestination }) => {
                 const body = (await res.json().catch(() => null)) as
                     | { message?: string }
                     | null;
+
+                // 409 = already booked — an expected rejection, so just toast
+                // (throwing it would surface a scary "Console Error" in dev).
+                if (res.status === 409) {
+                    toast.error(
+                        body?.message ??
+                            "This destination is already added in your bookings"
+                    );
+                    return;
+                }
+
                 throw new Error(body?.message ?? `Booking failed (${res.status})`);
             }
 

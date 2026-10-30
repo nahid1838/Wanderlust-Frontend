@@ -12,7 +12,7 @@ const QUICK_LINKS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
   { label: "Destinations", href: "/all-destinations" },
   { label: "My Bookings", href: "/my-bookings" },
-  { label: "My Profile", href: "#" },
+  { label: "My Profile", href: "/profile" },
 ]
 
 const SUPPORT_LINKS: { label: string; href: string }[] = [
